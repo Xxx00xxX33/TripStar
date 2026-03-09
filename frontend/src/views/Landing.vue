@@ -1,50 +1,7 @@
 <template>
   <div class="landing-page">
     <div class="lower-shade" :style="lowerShadeStyle"></div>
-    <nav class="navbar navbar-toggleable-md fixed-top navbar-transparent landing-navbar" :style="navbarStyle">
-      <div class="container">
-        <div class="navbar-translate">
-          <button
-            class="navbar-toggler navbar-toggler-right navbar-burger landing-burger"
-            type="button"
-            aria-label="Toggle navigation"
-          >
-            <span class="navbar-toggler-bar"></span>
-            <span class="navbar-toggler-bar"></span>
-            <span class="navbar-toggler-bar"></span>
-          </button>
-          <button class="navbar-brand landing-brand" type="button" @click="scrollToTop">TripStar</button>
-        </div>
-        <div class="navbar-collapse landing-navbar-collapse" id="navbarToggler">
-          <ul class="navbar-nav ml-auto landing-nav">
-            <li class="nav-item">
-                <a class="nav-link" rel="tooltip" title="Star on GitHub" data-placement="bottom" href="https://github.com/1sdv/TripStar" target="_blank" style="display:inline-flex;align-items:center;gap:6px;">
-                    <svg height="18" width="18" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-                      <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
-                    </svg>
-                </a>
-            </li>
-            <li class="nav-item">
-              <!-- <button class="nav-link landing-nav-btn fog-toggle" type="button" :aria-pressed="fogEnabled" @click="toggleFog">
-                {{ fogEnabled ? t('home.nav.fogOn') : t('home.nav.fogOff') }}
-              </button> -->
-            </li>
-            <li class="nav-item landing-lang-item">
-              <a-select v-model:value="locale" class="lang-select-nav" size="small" :aria-label="t('app.language.label')">
-                <a-select-option value="zh-CN">{{ t('app.language.zh') }}</a-select-option>
-                <a-select-option value="ja-JP">{{ t('app.language.ja') }}</a-select-option>
-                <a-select-option value="en-US">{{ t('app.language.en') }}</a-select-option>
-              </a-select>
-            </li>
-            <li class="nav-item">
-              <button type="button" class="btn btn-danger btn-round landing-cta" @click="scrollToForm">
-                {{ t('home.nav.cta') }}
-              </button>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </nav>
+    <NavBar @brand-click="scrollToTop" @cta-click="scrollToForm" />
 
     <div class="wrapper">
       <div class="page-header section-dark landing-header" :style="pageHeaderStyle">
@@ -224,7 +181,7 @@
                 <i v-if="loadingProgress >= 0 && loadingProgress <= 30" class="spinner-small"></i>
                 <svg v-else width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
               </div>
-              <p class="node-text">{{ t('home.loading.searchingAttractions') }}</p>
+              <p class="node-text">{{ loadingProgress > 30 ? t('home.loading.searchedAttractions') : t('home.loading.searchingAttractions') }}</p>
             </div>
             <div class="step-divider" :class="{ completed: loadingProgress > 30 }"></div>
 
@@ -232,9 +189,11 @@
             <div class="step-node" :class="{ active: loadingProgress > 30 && loadingProgress <= 50, completed: loadingProgress > 50 }">
               <div class="node-icon">
                 <i v-if="loadingProgress > 30 && loadingProgress <= 50" class="spinner-small"></i>
-                <svg v-else width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19a5.5 5.5 0 0 0-11-1.5A5 5 0 0 0 8 8a9 9 0 0 1 15 3.5 5 5 0 0 0-5.5 7.5z"></path></svg>
+                <svg v-else width="20px" height="20px" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M10.5 1.5V3.1M3.6 10H2M5.4512 4.95137L4.31982 3.82M15.5498 4.95137L16.6812 3.82M19 10H17.4M6.50007 10.0001C6.50007 7.79093 8.29093 6.00007 10.5001 6.00007C12.0061 6.00007 13.3177 6.83235 14.0001 8.06206M6 22C3.79086 22 2 20.2091 2 18C2 15.7909 3.79086 14 6 14C6.46419 14 6.90991 14.0791 7.32442 14.2245C8.04061 12.3396 9.86387 11 12 11C14.1361 11 15.9594 12.3396 16.6756 14.2245C17.0901 14.0791 17.5358 14 18 14C20.2091 14 22 15.7909 22 18C22 20.2091 20.2091 22 18 22C13.3597 22 9.87921 22 6 22Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
               </div>
-              <p class="node-text">{{ t('home.loading.queryingWeather') }}</p>
+              <p class="node-text">{{ loadingProgress > 50 ? t('home.loading.queriedWeather') : t('home.loading.queryingWeather') }}</p>
             </div>
             <div class="step-divider" :class="{ completed: loadingProgress > 50 }"></div>
 
@@ -242,9 +201,12 @@
             <div class="step-node" :class="{ active: loadingProgress > 50 && loadingProgress <= 70, completed: loadingProgress > 70 }">
               <div class="node-icon">
                 <i v-if="loadingProgress > 50 && loadingProgress <= 70" class="spinner-small"></i>
-                <svg v-else width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                <svg v-else fill="currentColor" width="25px" height="25px" viewBox="0 0 24 24" version="1.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                    <g id="Layer_Grid"/><g id="Layer_2">
+                    <path d="M21,8c0-2.2-1.8-4-4-4H7C4.8,4,3,5.8,3,8v3.8c-0.6,0.5-1,1.3-1,2.2v2.7V17v2c0,0.6,0.4,1,1,1s1-0.4,1-1v-1h16v1   c0,0.6,0.4,1,1,1s1-0.4,1-1v-2v-0.3V14c0-0.9-0.4-1.7-1-2.2V8z M5,8c0-1.1,0.9-2,2-2h10c1.1,0,2,0.9,2,2v3h-1v-1c0-1.7-1.3-3-3-3   h-1c-0.8,0-1.5,0.3-2,0.8C11.5,7.3,10.8,7,10,7H9c-1.7,0-3,1.3-3,3v1H5V8z M16,10v1h-3v-1c0-0.6,0.4-1,1-1h1C15.6,9,16,9.4,16,10z    M11,10v1H8v-1c0-0.6,0.4-1,1-1h1C10.6,9,11,9.4,11,10z M20,16H4v-2c0-0.6,0.4-1,1-1h3h3h2h3h3c0.6,0,1,0.4,1,1V16z"/></g>
+                </svg>
               </div>
-              <p class="node-text">{{ t('home.loading.recommendingHotels') }}</p>
+              <p class="node-text">{{ loadingProgress > 70 ? t('home.loading.recommendedHotels') : t('home.loading.recommendingHotels') }}</p>
             </div>
             <div class="step-divider" :class="{ completed: loadingProgress > 70 }"></div>
 
@@ -254,7 +216,7 @@
                 <i v-if="loadingProgress > 70 && loadingProgress < 100" class="spinner-small"></i>
                 <svg v-else width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
               </div>
-              <p class="node-text">{{ t('home.loading.generatingPlan') }}</p>
+              <p class="node-text">{{ loadingProgress >= 100 ? t('home.loading.done') : t('home.loading.generatingPlan') }}</p>
             </div>
           </div>
           
@@ -275,6 +237,7 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { message } from 'ant-design-vue'
 import { generateTripPlan } from '@/services/api'
+import NavBar from '@/components/NavBar.vue'
 import type { TripFormData } from '@/types'
 import type { Dayjs } from 'dayjs'
 
@@ -284,7 +247,7 @@ type LandingFormData = Omit<TripFormData, 'start_date' | 'end_date'> & {
 }
 
 const router = useRouter()
-const { t, locale } = useI18n()
+const { t } = useI18n()
 
 const loading = ref(false)
 const loadingProgress = ref(0)
@@ -330,13 +293,6 @@ const pageHeaderStyle = computed(() => ({
   backgroundSize: 'cover',
   backgroundRepeat: 'no-repeat',
 }))
-const navbarStyle = computed(() => ({
-  background: 'transparent',
-  backgroundColor: 'transparent',
-  borderBottomColor: 'transparent',
-  boxShadow: 'none',
-  backdropFilter: 'none',
-}))
 const movingCloudsStyle = computed(() => ({
   backgroundImage: "url('https://demos.creative-tim.com/paper-kit-2/assets/img/clouds.png')",
   opacity: fogEnabled.value ? '0.55' : '0',
@@ -380,9 +336,6 @@ const scrollToForm = () => {
     const y = formRef.value.getBoundingClientRect().top + window.scrollY - 65
     window.scrollTo({ top: y, behavior: 'smooth' })
   }
-}
-const toggleFog = () => {
-  fogEnabled.value = !fogEnabled.value
 }
 
 onMounted(() => {
@@ -430,7 +383,7 @@ const handleSubmit = async () => {
       else if (loadingProgress.value <= 70) loadingStatus.value = t('home.loading.recommendingHotels')
       else loadingStatus.value = t('home.loading.generatingPlan')
     }
-  }, 500)
+  }, 1000)
 
   try {
     const requestData: TripFormData = {
@@ -498,208 +451,6 @@ const handleSubmit = async () => {
   top: -28px;
   height: 28px;
   background: linear-gradient(to bottom, rgba(6, 14, 20, 0), rgba(6, 14, 20, 0.92));
-}
-
-.landing-navbar {
-  /* Bootstrap fixed-top 类在 global.css 中不存在，手动强制 fixed 定位 */
-  position: fixed !important;
-  top: 0 !important;
-  left: 0 !important;
-  right: 0 !important;
-  width: 100% !important;
-  z-index: 1030 !important;
-  min-height: 70px;
-  padding: 0 !important;
-  background: transparent !important;
-  background-color: transparent !important;
-  background-image: none !important;
-  box-shadow: none !important;
-  border: none !important;
-  border-bottom: 1px solid transparent !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  transition: background 0.3s;
-}
-
-.landing-navbar:not(.navbar-transparent) {
-  background: transparent !important;
-  background-color: transparent !important;
-  background-image: none !important;
-  border-color: transparent !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-}
-
-.landing-navbar.navbar-transparent {
-  padding-top: 0 !important;
-  background: transparent !important;
-  background-color: transparent !important;
-  background-image: none !important;
-  box-shadow: none !important;
-}
-
-/* 确保 Ant Design Layout 的 header 样式不干扰 landing 导航栏 */
-.landing-page .landing-navbar *,
-.landing-page .landing-navbar::before,
-.landing-page .landing-navbar::after {
-  box-sizing: border-box;
-}
-
-.landing-navbar .container {
-  width: 100% !important;
-  max-width: 100vw !important;
-  min-height: 70px;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: space-between !important;
-  padding-left: 20px;
-  padding-right: 20px;
-  box-sizing: border-box !important;
-}
-
-.landing-navbar .navbar-translate {
-  display: flex !important;
-  align-items: center !important;
-  min-height: 70px;
-  flex: 0 0 auto;
-}
-
-.landing-navbar .navbar-brand {
-  margin: 0 !important;
-  padding: 0 !important;
-  line-height: 1 !important;
-}
-
-.landing-burger {
-  display: none !important;
-}
-
-.landing-brand {
-  background: transparent !important;
-  border: 0;
-  color: #f4f8fc !important;
-  font-weight: 700 !important;
-  letter-spacing: 0.12em !important;
-  text-transform: uppercase;
-  font-size: 13px !important;
-  cursor: pointer;
-  min-height: 34px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.landing-navbar-collapse {
-  display: flex !important;
-  justify-content: flex-end;
-  align-items: center;
-  flex: 1;
-  position: static !important;
-  transform: none !important;
-  width: auto !important;
-  height: auto !important;
-  background: transparent !important;
-  border: 0 !important;
-  padding: 0 !important;
-  overflow: visible !important;
-}
-
-.landing-navbar-collapse::before,
-.landing-navbar-collapse::after {
-  display: none !important;
-  content: none !important;
-  background: transparent !important;
-}
-
-.landing-nav {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin: 0 0 0 auto !important;
-  padding: 0;
-  list-style: none;
-}
-
-.landing-nav .nav-item {
-  margin: 0;
-  padding: 0;
-  display: inline-flex;
-  align-items: center;
-}
-
-.landing-nav .nav-item .nav-link {
-  margin: 0 !important;
-  padding: 0 !important;
-  line-height: 1 !important;
-  opacity: 1 !important;
-}
-
-.landing-nav-btn {
-  border: 1.2px solid rgba(236, 243, 250, 0.24);
-  background: rgba(12, 23, 32, 0.56);
-  color: #ecf3fa;
-  border-radius: 999px;
-  padding: 0 12px;
-  min-height: 34px;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  text-transform: uppercase;
-}
-
-.fog-toggle[aria-pressed='true'] {
-  border-color: rgba(215, 110, 66, 0.55);
-  background: rgba(215, 110, 66, 0.2);
-  color: #ffe3d6;
-}
-
-.landing-lang-item {
-  display: flex;
-  align-items: center;
-}
-
-.lang-select-nav {
-  width: 110px;
-}
-
-.lang-select-nav :deep(.ant-select-selector) {
-  height: 34px !important;
-  padding: 0 12px !important;
-  border: 1.2px solid rgba(236, 243, 250, 0.24) !important;
-  background: rgba(12, 23, 32, 0.56) !important;
-  border-radius: 999px !important;
-  display: flex !important;
-  align-items: center !important;
-}
-
-.lang-select-nav :deep(.ant-select-selection-item) {
-  line-height: 32px !important;
-  font-size: 12px !important;
-}
-
-.lang-select-nav :deep(.ant-select-selection-item),
-.lang-select-nav :deep(.ant-select-arrow) {
-  color: #ecf3fa !important;
-}
-
-.landing-cta {
-  min-height: 32px;
-  padding: 0 14px !important;
-  font-size: 12px !important;
-  border: none !important;
-  letter-spacing: 0.06em;
-  display: inline-flex !important;
-  align-items: center;
-  justify-content: center;
-  margin: 0 !important;
-}
-
-.landing-navbar .btn {
-  margin: 0 !important;
 }
 
 .landing-header {
@@ -974,11 +725,29 @@ const handleSubmit = async () => {
   justify-content: center;
   cursor: pointer;
   user-select: none;
+  transition: all 0.55s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.interest-pill:hover {
+  background: rgba(236, 243, 250, 0.08);
+  border-color: rgba(236, 243, 250, 0.3);
+  /* transform: translateY(-2px); */
+  box-shadow: 0 4px 12px rgba(4, 11, 18, 0.3);
+}
+
+.interest-pill:active {
+  transform: translateY(1px) scale(0.96);
+  box-shadow: 0 2px 4px rgba(4, 11, 18, 0.2);
 }
 
 .interest-pill.active {
   border-color: rgba(215, 110, 66, 0.8);
   background: rgba(215, 110, 66, 0.2);
+}
+
+.interest-pill.active:hover {
+  background: rgba(215, 110, 66, 0.28);
+  border-color: rgba(215, 110, 66, 1);
 }
 
 .submit-btn {
@@ -1195,33 +964,6 @@ const handleSubmit = async () => {
 }
 
 @media (max-width: 991px) {
-  .landing-navbar {
-    min-height: 64px;
-  }
-
-  .landing-navbar .container {
-    padding-left: 14px;
-    padding-right: 14px;
-    min-height: 64px;
-  }
-
-  .landing-navbar .navbar-translate {
-    min-height: 64px;
-  }
-
-  .lang-select-nav {
-    width: 92px;
-  }
-
-  .landing-cta {
-    min-height: 34px;
-    padding: 0 10px !important;
-  }
-
-  .landing-nav {
-    gap: 6px;
-  }
-
   .form-section {
     padding: 0 14px 72px;
   }
@@ -1237,39 +979,6 @@ const handleSubmit = async () => {
 }
 
 @media (max-width: 520px) {
-  .landing-navbar .container {
-    padding-left: 8px;
-    padding-right: 8px;
-  }
-
-  .landing-brand {
-    font-size: 10px !important;
-    letter-spacing: 0.05em !important;
-    max-width: 70px; /* 限制品牌宽度，防止挤占按钮位 */
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .landing-nav {
-    gap: 3px !important; /* 极致压缩间距 */
-  }
-
-  .lang-select-nav {
-    width: 68px !important; /* 进一步压缩语言选择框宽度 */
-  }
-
-  .lang-select-nav :deep(.ant-select-selector) {
-    padding: 0 4px !important; /* 减少内部 Padding */
-  }
-
-  .landing-cta {
-    padding: 0 8px !important;
-    font-size: 10px !important;
-    min-height: 30px !important;
-    margin-right: 0 !important;
-  }
-
   .landing-header .presentation-title {
     font-size: clamp(34px, 10vw, 52px);
   }
@@ -1285,17 +994,6 @@ const handleSubmit = async () => {
 
   .interest-group {
     grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-/* 针对极窄屏幕（如 iPhone SE）的极致修复 */
-@media (max-width: 400px) {
-  .landing-nav .nav-item:first-child {
-    display: none !important; /* 隐藏 GitHub 链接，腾出空间给核心功能 */
-  }
-  
-  .lang-select-nav {
-    width: 62px !important;
   }
 }
 </style>
